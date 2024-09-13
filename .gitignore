@@ -131,6 +131,7 @@ dmypy.json
 # Custom
 /docs
 */mediafiles
+config/staticfiles/
 # projectApps/*/migrations
 # projectApps/static
 .vscode

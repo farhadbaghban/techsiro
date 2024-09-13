@@ -3,13 +3,14 @@ import environ
 from .base import *  # noqa: F403
 import dj_database_url
 
+environ.Env.read_env(Path.joinpath(BASE_DIR, "settings", ".env"))
+
 env = environ.Env(DEBUG=(bool, False))
 DEBUG = env("DEBUG", cast=bool, default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 SECRET_KEY = env("SECRET_KEY", cast=str)
 
-PROJECT_STARTING_URL = env("PROJECT_STARTING_URL", cast=str)
 
 PROJECT_URL_PREFIX = "api/v1/"
 
@@ -122,10 +123,11 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=30),  # noqa: F405
 }
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)  # noqa: F405
-STATICFILES_EXCLUDE = ["swagger-ui-es-bundle.js.map"]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),  # noqa: F405
+]
 
-STATIC_URL = "/staticfiles/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # noqa: F405
 MEDIA_URL = "/mediafiles/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")  # noqa: F405

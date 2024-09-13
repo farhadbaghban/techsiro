@@ -24,6 +24,10 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path(f"{settings.PROJECT_URL_PREFIX}admin/", admin.site.urls),
+    path(
+        f"{settings.PROJECT_URL_PREFIX}auth/",
+        include("projectApps.accounts.api.urls", namespace="AccountUserApi"),
+    ),
 ]
 
 
