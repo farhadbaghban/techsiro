@@ -1,0 +1,50 @@
+services:
+  db:
+    container_name: techsiro_db
+    image: postgres:16.3
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER_USERNAME}
+      - POSTGRES_PASSWORD=${DB_USER_PASSWORD}
+    networks:
+      - main
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER_USERNAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    env_file:
+      - .env
+  app:
+    container_name: techsiro_back
+    image: techsiro_back_image
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: >
+      bash -c "entrypoint.sh"
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
+      - DB_HOST=${DB_HOST}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER_USERNAME}
+      - POSTGRES_PASSWORD=${DB_USER_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    networks:
+      - main
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+networks:
+  main:
+
+
+volumes:
+  postgres_data:

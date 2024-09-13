@@ -1,0 +1,6 @@
+# Base dependencies
+-r base.requirements.txt
+
+# Development-specific dependencies
+django-debug-toolbar==3.8.1
+gunicorn==23.0.0
