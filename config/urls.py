@@ -32,6 +32,10 @@ urlpatterns = [
         f"{settings.PROJECT_URL_PREFIX}products/",
         include("projectApps.products.api.urls", namespace="ProductApis"),
     ),
+    path(
+        f"{settings.PROJECT_URL_PREFIX}comments/",
+        include("projectApps.comments.api.urls", namespace="CommentsAPI"),
+    ),
 ]
 
 
