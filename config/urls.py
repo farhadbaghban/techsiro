@@ -28,6 +28,10 @@ urlpatterns = [
         f"{settings.PROJECT_URL_PREFIX}auth/",
         include("projectApps.accounts.api.urls", namespace="AccountUserApi"),
     ),
+    path(
+        f"{settings.PROJECT_URL_PREFIX}products/",
+        include("projectApps.products.api.urls", namespace="ProductApis"),
+    ),
 ]
 
 

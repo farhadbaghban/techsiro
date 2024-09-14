@@ -30,7 +30,6 @@ from projectApps.accounts.api.permissions import IsAuthenticatedAndOwner
 logger = logging.getLogger(__name__)
 
 
-
 class UserListApiView(APIView):
     permission_classes = [IsAuthenticatedAndOwner]
 
@@ -166,7 +165,8 @@ class UserLoginView(APIView):
             HTTP_400_BAD_REQUEST: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    "error": InputUserLoginViewSerializer.errors,
+                    "email": openapi.Schema(type=openapi.TYPE_STRING),
+                    "password": openapi.Schema(type=openapi.TYPE_STRING),
                 },
             ),
             HTTP_404_NOT_FOUND: openapi.Schema(
