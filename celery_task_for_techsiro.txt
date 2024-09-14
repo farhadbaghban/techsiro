@@ -1,0 +1,78 @@
+put these in celery.py in your specific app 
+{
+from __future__ import absolute_import, unicode_literals
+import os
+from celery import Celery
+
+# Set the default Django settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.production')
+
+# Initialize Celery app
+app = Celery('<app_name>')
+
+# Load Celery settings from Django settings, using the 'CELERY_' prefix
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Autodiscover tasks from all registered Django app configs
+app.autodiscover_tasks()
+}
+
+
+
+----------------------------------------------------
+
+create tasks.py and put these codes in 
+
+
+from celery import shared_task
+from datetime import timedelta
+from django.utils.timezone import now
+from projectApps.cart.models import Order  # Make sure to import your model
+
+# Shared task to clear expired orders
+@shared_task
+def clear_expired_orders():
+    # Define the expiration time (e.g., orders older than 10 days)
+    expiration_time = now() - timedelta(days=10)
+
+    # Delete all orders that are older than the expiration time
+    Order.objects.filter(created_at__lte=expiration_time).delete()
+
+
+-------------------------------------------------------
+
+put celery_beat configuration in dhango settings 
+
+
+# Celery Beat scheduler
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# (Optional) Celery Beat settings for database storage
+CELERY_BEAT_SETTINGS = {
+    "DATABASE": "default",  # Name of the Django database to store periodic tasks
+}
+
+# Schedule the task to run periodically (e.g., every 30 days)
+from datetime import timedelta
+
+CELERY_BEAT_SCHEDULE = {
+    "clear-expired-order": {
+        "task": "projectApps.cart.tasks.clear_expired_orders",
+        "schedule": timedelta(days=30),  # Run every 30 days
+    },
+}
+----------------------------------------------
+
+for starting and using celery beat 
+
+pip install celery django-celery-beat
+
+
+and you have to create models and migrations with 
+
+python manage.py migrate django_celery_beat
+
+
+last of all, you can start celery beat
+
+celery -A <your_project> beat -l info
